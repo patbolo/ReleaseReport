@@ -1,6 +1,6 @@
 <?php
 
-class JIRAConnector implements IProjectManagementSystem{
+class JIRAGateway implements IProjectManagementSystem{
 
 	static $authSegment = '/auth/1/session';
 
@@ -12,9 +12,24 @@ class JIRAConnector implements IProjectManagementSystem{
 	
 	protected $client;
 	
+	private $baseURL;
+	
+	private $username;
+	
+	private $password;
+	
+	private $regex;
+
+	public function __construct($baseURL, $username, $password, $regex){
+		$this->baseURL = $baseURL;
+		$this->username = $username;
+		$this->password = $password;
+		$this->regex = $regex;
+	}
+	
 	private function getClient(){
 		if (!isset($this->client)){
-			$this->client = new RestfulService(RELEASE_REPORT_BASE_URL.'/rest', self::$expiry);
+			$this->client = new RestfulService($this->baseURL.'/rest', self::$expiry);
 			$this->client->httpHeader('Content-Type: application/json');
 		}
 		return $this->client;
@@ -22,7 +37,7 @@ class JIRAConnector implements IProjectManagementSystem{
 
 	protected function getAuthenticatedClient(){
 		if (isset($this->cookie)) return $this->client;
-		$response = $this->getClient()->request(self::$authSegment, 'POST', '{"username":"'.RELEASE_REPORT_USERNAME.'","password":"'.RELEASE_REPORT_PASSWORD.'"}');
+		$response = $this->getClient()->request(self::$authSegment, 'POST', '{"username":"'.$this->username.'","password":"'.$this->password.'"}');
 		$session = (json_decode($response->getBody()));
 		if (!isset($session->session->value)) user_error('Error when authenticating against the JIRA API');
 		$this->cookie = $session->session->value;
@@ -54,7 +69,7 @@ class JIRAConnector implements IProjectManagementSystem{
 	public function getTickets($commits){
 		$tickets = new ArrayList();
 		foreach ($commits as $releaseID=>$commitMsg){
-			preg_match_all('/'.RELEASE_REPORT_REGEX.'/', $commitMsg, $matches);
+			preg_match_all('/'.$this->regex.'/', $commitMsg, $matches);
 			//TODO Cater for complex regex, with multiple tickets in the commit message
 			if ($matches) {
 				foreach($matches as $match){

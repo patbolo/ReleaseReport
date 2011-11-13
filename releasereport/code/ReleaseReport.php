@@ -37,10 +37,16 @@ class ReleaseReport extends SS_Report{
 		$scsmConnector = self::$SCMSConnector;
 		$commits = $scsmConnector->getCommits($previousRelease, $latestRelease);
 
-		if (!isset(self::$ProjectManagementConnector)) user_error('You need to define a source code management system connector');
+		
 
-		$pmConnector = self::$ProjectManagementConnector;
-		$tickets = $pmConnector->getTickets($commits);
+		$tickets = new ArrayList();
+		$pmConnectorManager = ProjectManagementConnectorManager::get();
+
+		$pmConnectors = $pmConnectorManager->getConnectors();
+		if (!count($pmConnectors)) user_error('You need to define at least one source code management system connector');
+		foreach ($pmConnectors as $pmConnector){
+			$tickets->merge($pmConnector->getTickets($commits));
+		}
 
 		$grid = new GridField('ReportContent', 'ReportContent', $tickets);
 		$grid->setModelClass('Ticket');

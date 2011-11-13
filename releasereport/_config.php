@@ -7,4 +7,5 @@ if (!defined('RELEASE_REPORT_BASE_URL')) define('RELEASE_REPORT_BASE_URL', 'http
 if (!defined('RELEASE_REPORT_USERNAME')) define('RELEASE_REPORT_USERNAME', 'username');
 if (!defined('RELEASE_REPORT_PASSWORD')) define('RELEASE_REPORT_PASSWORD', 'password');
 ReleaseReport::$SCMSConnector = new GitConnector();
-ReleaseReport::$ProjectManagementConnector = new JIRAConnector();
+
+ProjectManagementConnectorManager::get()->register('Greenhopper', new JIRAGateway(RELEASE_REPORT_BASE_URL, RELEASE_REPORT_USERNAME, RELEASE_REPORT_PASSWORD, RELEASE_REPORT_REGEX));
