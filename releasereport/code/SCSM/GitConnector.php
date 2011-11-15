@@ -15,8 +15,7 @@ class GitConnector implements ISCMSConnector {
 			exec("git log --reverse --pretty=tformat:'%H'", $firstCommit);
 			$fromTo = $firstCommit[0] .' ' . $toRelease->SHA;
 		}
-		if (!defined('RELEASE_REPORT_REGEX')) user_error('You must defined the RELEASE_REPORT_REGEX constant.');
-		$logCmd = "git log " . $fromTo . " --grep='".RELEASE_REPORT_REGEX."' --pretty=tformat:'%H%s'";
+		$logCmd = "git log " . $fromTo . " --pretty=tformat:'%H%s'";
 		exec($logCmd, $commits);
 
 		$output = array();

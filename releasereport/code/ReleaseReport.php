@@ -6,10 +6,8 @@ class ReleaseReport extends SS_Report{
 
 	static $SCMSConnector;
 
-	static $ProjectManagementConnector;
-
     function title(){
-            return "Releases";
+            return "Release history";
     }
 
 	function forTemplate(){
@@ -59,6 +57,8 @@ class ReleaseReport extends SS_Report{
 	 * @return FormField subclass
 	 */
 	function getReleasesField() {
-		return new GridField('ReportContent', 'ReportContent', new DataList($this->dataClass()), null, new ReleaseReportGridFieldPresenter());
+		$grid = new GridField('ReportContent', 'ReportContent', new DataList($this->dataClass()), null);
+		$grid->getPresenter()->setTemplate('ReleaseReportGridFieldPresenter');
+		return $grid;
 	}
 }

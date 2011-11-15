@@ -2,10 +2,17 @@
 
 SS_Report::register("ReportAdmin", "ReleaseReport");
 
-if (!defined('RELEASE_REPORT_REGEX')) define('RELEASE_REPORT_REGEX','myregextomatchinmycommitmessages');
-if (!defined('RELEASE_REPORT_BASE_URL')) define('RELEASE_REPORT_BASE_URL', 'https://example.com');
-if (!defined('RELEASE_REPORT_USERNAME')) define('RELEASE_REPORT_USERNAME', 'username');
-if (!defined('RELEASE_REPORT_PASSWORD')) define('RELEASE_REPORT_PASSWORD', 'password');
+if (!defined('JIRA_REGEX')) define('JIRA_REGEX','myregextomatchinmycommitmessages'); //ie 'ABC-[0-9]*'
+if (!defined('JIRA_BASE_URL')) define('JIRA_BASE_URL', 'https://example.onjira.com');
+if (!defined('JIRA_USERNAME')) define('JIRA_USERNAME', 'username');
+if (!defined('JIRA_PASSWORD')) define('JIRA_PASSWORD', 'password');
+
+if (!defined('ZENDESK_REGEX')) define('ZENDESK_REGEX','myregextomatchinmycommitmessages'); // ie 'HD#([0-9]+)'
+if (!defined('ZENDESK_BASE_URL')) define('ZENDESK_BASE_URL', 'https://example.zendesk.com');
+if (!defined('ZENDESK_USERNAME')) define('ZENDESK_USERNAME', 'username');
+if (!defined('ZENDESK_PASSWORD')) define('ZENDESK_PASSWORD', 'password');
+
 ReleaseReport::$SCMSConnector = new GitConnector();
 
-ProjectManagementConnectorManager::get()->register('Greenhopper', new JIRAGateway(RELEASE_REPORT_BASE_URL, RELEASE_REPORT_USERNAME, RELEASE_REPORT_PASSWORD, RELEASE_REPORT_REGEX));
+ProjectManagementConnectorManager::get()->register('Greenhopper', new JIRAGateway(JIRA_BASE_URL, JIRA_USERNAME, JIRA_PASSWORD, JIRA_REGEX));
+ProjectManagementConnectorManager::get()->register('Zendesk', new ZendeskGateway(ZENDESK_BASE_URL, ZENDESK_USERNAME, ZENDESK_PASSWORD, ZENDESK_REGEX));
